@@ -1,15 +1,21 @@
+import { POST } from 'node-bits';
+
+import { authorize, secureRoutes } from './util';
+
 const DEFAULT_CONFIG = {
-  authorize: 'api/authorize',
+  authorizeUrl: '/api/authorize',
+  expiresIn: '1d',
 };
 
-export default (config) => {
-  const options = Object.assign(DEFAULT_CONFIG, config);
+export default (options) => {
+  const config = Object.assign(DEFAULT_CONFIG, options);
 
   return {
     beforeConfigureRoutes: (args) => {
-    },
+      const { router, database } = args;
 
-    afterConfigureRoutes: (args) => {
-    }
+      router[POST](config.authorizeUrl, authorize(config, database));
+      router.use(secureRoutes(config));
+    },
   };
 };
