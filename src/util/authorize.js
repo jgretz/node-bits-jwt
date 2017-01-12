@@ -28,10 +28,14 @@ export const authorize = (config, database) => (req, res) => {
           const jwtConfig = { expiresIn };
           const token = jwt.sign(user, secret, jwtConfig);
 
+          const data = {};
+          _.forEach(config.returnData || [], key => { data[key] = user[key]; });
+
           // return
           res.json({
             success: true,
             token,
+            data,
           });
         })
         .catch(failure);
