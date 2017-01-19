@@ -19,7 +19,19 @@ export const authorize = (config, database) => (req, res) => {
       }
 
       const user = users[0];
-      bcrypt.compare(req.body[password], user[password])
+      const hash = user[password];
+      if (!hash) {
+        console.log('User in the database doesnt have a hashed password');
+        return failure();
+      }
+
+      const check = req.body[password];
+      if (!check) {
+        console.log('Password wasnt supplied by the user');
+        return failure();
+      }
+
+      bcrypt.compare(check, hash)
         .then((result) => {
           if (!result) {
             return failure();
