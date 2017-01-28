@@ -1,6 +1,17 @@
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
 
+const getToken = (req) => {
+  const locations = [
+    req.body.token,
+    req.query.token,
+    req.headers['x-access-token'],
+    req.headers['Authorization'],
+  ];
+
+  return _.find(locations, (loc) => _.isString(loc));
+};
+
 export const secureRoutes = (config) => (req, res, next) => {
   const { secret, restrict, authorizeUrl } = config;
 
@@ -23,7 +34,7 @@ export const secureRoutes = (config) => (req, res, next) => {
     return;
   };
 
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var token = getToken(req);
   if (!token) {
     failure();
     return;
