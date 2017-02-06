@@ -67,6 +67,6 @@ export const authorize = (config, database) => (req, res) => {
     })
     .catch((err) => {
       logError(err);
-      res.json({ success: false });
+      res.status(400).json({ success: false });
     });
 };
