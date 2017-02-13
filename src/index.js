@@ -19,3 +19,6 @@ export default (options) => {
     },
   };
 };
+
+// export schemes
+export * from './schemes';
