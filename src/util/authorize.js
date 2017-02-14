@@ -45,24 +45,37 @@ const findUserFromConfig = (database, req, config) => {
     });
 };
 
+const runMap = (object, map) =>
+  !map ? 
+    object :
+    Array.isArray(map) ? 
+      mapAttrubutes(object, map) :
+      map(object);
+
+const mapAttrubutes = (object, attributes) =>
+  _.reduce(attributes || [], (result, key) => {
+        return { ...result, [key]: object[key] };
+      }, {});
+
 export const authorize = (config, database) => (req, res) => {
   const { secret, expiresIn, findUser = findUserFromConfig } = config;
 
   findUser(database, req, config)
     .then((user) => {
-      // get token
-      const jwtConfig = { expiresIn };
-      const token = jwt.sign(user, secret, jwtConfig);
+      // both, or only one can be specified
+      let tokenConfig = config.tokenData || config.returnData;
+      let returnConfig = config.returnData || config.tokenData;
 
-      const data = _.reduce(config.returnData || [], (result, key) => {
-        return { ...result, [key]: user[key] };
-      }, {});
+      // structure can be an array, or a function
+      const tokenData = runMap(user, tokenConfig);
+      const returnData = runMap(user, returnConfig);
 
-      // return
+      // make a token, and return
+      const token = jwt.sign(tokenData, secret, { expiresIn });
       res.json({
         success: true,
         token,
-        data,
+        returnData,
       });
     })
     .catch((err) => {
