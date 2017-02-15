@@ -48,9 +48,11 @@ const findUserFromConfig = (database, req, config) => {
 const runMap = (object, map) =>
   !map ? 
     object :
-    Array.isArray(map) ? 
+    _.isArray(map) ? 
       mapAttrubutes(object, map) :
-      map(object);
+      _.isFunction(map) ?
+        map(object) : 
+        {map : object[map]};
 
 const mapAttrubutes = (object, attributes) =>
   _.reduce(attributes || [], (result, key) => {
