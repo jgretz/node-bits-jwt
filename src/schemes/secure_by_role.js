@@ -3,28 +3,6 @@ import murl from 'murl';
 
 const isWildcard = (def) => _.isString(def) && def === '*';
 
-
-const matchRouteRoleAndDefinition = (route, verb, role, def) => {
-  if (isWildcard(def)) {
-    return Promise.resolve(true);
-  }
-
-  const verbs = _.find(def, (verbs, key) => murl(key)(route) !== null);
-  if (!verbs) {
-    return Promise.reject(`No access rule defined for role ${role} for route ${route}`);
-  }
-
-  if (!_.isArray(verbs)) {
-    return Promise.reject('Verbs must be specified in an array for route rules');
-  }
-
-  if (!verbs.includes(verb.toLowerCase())) {
-    return Promise.reject(`${role} has not been granted access to ${verb} on route ${route}`);
-  }
-
-  return Promise.resolve(true);
-};
-
 export const secureByRole = (config) => (req, token) => {
   const { roleKey, map } = config;
   if (!roleKey && !map) {
@@ -34,12 +12,28 @@ export const secureByRole = (config) => (req, token) => {
   const role = token[roleKey];
   if (!role) {
     return Promise.reject(`Role Key ${roleKey} not found in token`);
-  }
+  } 
+  
+  // if we weren't given an array, make a singleton
+  const roles = !_.isArray(role) ? [role] : role;
 
-  const def = map[role];
-  if (!def) {
-    return Promise.reject(`Role ${role} not found in map`);
-  }
+  // make sure at least one role is provided
+  if (_.isEmpty(roles)) {
+    return Promise.reject(`No roles in token`);
+  } 
 
-  return matchRouteRoleAndDefinition(req.url, req.method, role, def);
+  const { url, method } = req;
+
+  // map the current roles onto the auth graph against the current verb
+  const result = _.map(roles, (r) => {
+    const def = map[r.toLowerCase()];
+    const verbs = _.find(def, (verbs, key) => murl(key)(url) !== null) || [];
+    return isWildcard(def) || verbs.includes(method.toLowerCase());
+  })
+  // reduce the array to a single bool, if it exists
+  .reduce((m,n) => m || n);
+
+  return result ? 
+    Promise.resolve(true) : 
+    Promise.reject(`${role} has not been granted access to ${method} on route ${url}`);
 };
