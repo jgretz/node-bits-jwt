@@ -8,8 +8,12 @@ const findUserFromConfig = (database, req, config) => {
     const { user: { model, key, password } } = config;
 
     const query = {};
-    query[key] = req.body[key];
-
+    const username = req.body[key];
+    if(!username) {
+      reject();
+      return;
+    }
+    query[key] = username.trim();
     database.find(model, query)
       .then((users) => {
         if (users.length !== 1) {
