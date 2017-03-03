@@ -1,21 +1,21 @@
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
-import { logWarning } from 'node-bits';
+import {logWarning} from 'node-bits';
 
-const getToken = (req) => {
+const getToken = req => {
   const locations = [
     req.body.token,
     req.query.token,
     req.headers['x-access-token'],
-    req.headers['authorization'],
-    req.headers['Authorization'],
+    req.headers.authorization,
+    req.headers.Authorization,
   ];
 
-  return _.find(locations, (loc) => _.isString(loc));
+  return _.find(locations, loc => _.isString(loc));
 };
 
-export const secureRoutes = (config) => (req, res, next) => {
-  const { secret, restrict, authorizeUrl } = config;
+export const secureRoutes = config => (req, res, next) => {
+  const {secret, restrict, authorizeUrl} = config;
 
   if (!_.some((restrict || []), pattern => req.url.startsWith(pattern))) {
     next();
@@ -36,7 +36,7 @@ export const secureRoutes = (config) => (req, res, next) => {
     return;
   };
 
-  var token = getToken(req);
+  const token = getToken(req);
   if (!token) {
     logWarning(`No token specified to access ${req.url}`);
     failure();
@@ -52,7 +52,7 @@ export const secureRoutes = (config) => (req, res, next) => {
 
     const schemes = (config.securitySchemes || []).map(scheme => scheme(req, tokenData));
     Promise.all(schemes)
-      .then((values) => {
+      .then(values => {
         if (_.every(values, v => v)) {
           req.tokenData = tokenData;
           next();
@@ -62,10 +62,9 @@ export const secureRoutes = (config) => (req, res, next) => {
         logWarning(`Access schemes turned down access to ${req.url}`);
         failure();
       })
-      .catch((err) => {
+      .catch(err => {
         logWarning(`Access schemes turned down access to ${req.url}\n${err}`);
         failure();
       });
-
   });
 };
