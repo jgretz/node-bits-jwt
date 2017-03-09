@@ -14,7 +14,7 @@ const getToken = req => {
   return _.find(locations, loc => _.isString(loc));
 };
 
-export const secureRoutes = config => (req, res, next) => {
+export const secureRoutes = (config, database) => (req, res, next) => {
   const {secret, restrict, authorizeUrl} = config;
 
   if (!_.some((restrict || []), pattern => req.url.startsWith(pattern))) {
@@ -50,7 +50,7 @@ export const secureRoutes = config => (req, res, next) => {
       return;
     }
 
-    const schemes = (config.securitySchemes || []).map(scheme => scheme(req, tokenData));
+    const schemes = (config.securitySchemes || []).map(scheme => scheme(req, tokenData, database));
     Promise.all(schemes)
       .then(values => {
         if (_.every(values, v => v)) {

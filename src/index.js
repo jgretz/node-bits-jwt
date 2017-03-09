@@ -15,7 +15,7 @@ export default options => {
       const {router, database} = args;
 
       router[POST](config.authorizeUrl, authorize(config, database));
-      router.use(secureRoutes(config));
+      router.use(secureRoutes(config, database));
     },
   };
 };
