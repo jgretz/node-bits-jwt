@@ -131,3 +131,15 @@ securitySchemes: [
   }),
 ],
 ```
+
+#### secureManual
+secureManual allows you to craft the security check to meet any requirement. It requires as its parameter a function with the signature ```(token, database)``` that returns a Promise. If the promise resolves true, then the check will be considered as passed, if false, then failed.
+
+```
+securitySchemes: [
+  secureManual((token, database) => {
+    // do some database queries
+    return Promise.resolve(true);
+  }),
+],
+```
