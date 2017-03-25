@@ -14,7 +14,8 @@ const findUserFromConfig = (database, req, config) =>
       return;
     }
     query[key] = username.trim();
-    database.find(model, query).then(users => {
+
+    database.find(model, {where: query}).then(users => {
       if (users.length !== 1) {
         reject();
         return;
