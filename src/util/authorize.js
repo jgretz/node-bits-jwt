@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import {logError} from 'node-bits';
 
 const findUserFromConfig = (database, req, config) =>

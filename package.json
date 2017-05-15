@@ -1,6 +1,6 @@
 {
   "name": "node-bits-jwt",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Provides the logic to add jwt to a node-bits server",
   "main": "lib/index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/jgretz/node-bits-jwt#readme",
   "dependencies": {
-    "bcrypt": "^1.0.2",
+    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^7.3.0",
     "lodash": "^4.17.4",
     "murl": "^0.4.1",
