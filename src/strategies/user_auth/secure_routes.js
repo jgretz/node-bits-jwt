@@ -32,8 +32,6 @@ export const secureRoutes = (config, database) => (req, res, next) => {
       success: false,
       message: 'No valid token provided.',
     });
-
-    return;
   };
 
   const token = getToken(req);
