@@ -28,7 +28,7 @@ export const secureByRole = config => (req, token) => {
   const result = _.map(roles, r => {
     const def = map[r.toLowerCase()];
     const verbs = _.find(def, (verbs, key) => murl(key)(url) !== null) || [];
-    return isWildcard(def) || verbs.includes(method.toLowerCase());
+    return isWildcard(def) || _.map(verbs, v => v.toLowerCase()).includes(method.toLowerCase());
   })
   // reduce the array to a single bool, if it exists
   .reduce((m, n) => m || n);
