@@ -84,6 +84,7 @@ user: {
   model: 'user',
   key: 'email',
   password: 'password',
+  active: 'active',
 },
 ```
 

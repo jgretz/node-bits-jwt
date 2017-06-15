@@ -5,7 +5,7 @@ import {logError} from 'node-bits';
 
 const findUserFromConfig = (database, req, config) =>
   new Promise((resolve, reject) => {
-    const {user: {model, key, password}} = config;
+    const {user: {active, model, key, password}} = config;
 
     const query = {};
     const username = req.body[key];
@@ -14,6 +14,10 @@ const findUserFromConfig = (database, req, config) =>
       return;
     }
     query[key] = username.trim();
+
+    if(active) {
+      query[active] = true;
+    }
 
     database.find(model, {where: query}).then(users => {
       if (users.length !== 1) {
