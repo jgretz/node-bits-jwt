@@ -1,5 +1,3 @@
-import {POST} from 'node-bits';
-
 import userStrategy from './strategies/user_auth';
 
 const DEFAULT_CONFIG = {
@@ -16,7 +14,7 @@ export default options => {
     beforeConfigureRoutes: args => {
       const {router, database} = args;
 
-      router[POST](authorizeUrl, strategy.authorize(config, database));
+      router.post(authorizeUrl, strategy.authorize(config, database));
       router.use(strategy.secureRoutes(config, database));
     },
   };
