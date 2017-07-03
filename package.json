@@ -1,6 +1,6 @@
 {
   "name": "node-bits-jwt",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "Provides the logic to add jwt to a node-bits server",
   "main": "lib/index.js",
   "scripts": {

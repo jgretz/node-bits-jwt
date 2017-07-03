@@ -34,8 +34,21 @@ export const secureRoutes = (config, database) => (req, res, next) => {
     });
   };
 
+  const failureOverride = (token, err) => {
+    if (config.allowRequestDespiteJwtFailure && config.allowRequestDespiteJwtFailure(req, token, err)) {
+      next();
+      return true;
+    }
+
+    return false;
+  };
+
   const token = getToken(req);
   if (!token) {
+    if (failureOverride(token)) {
+      return;
+    }
+
     logWarning(`No token specified to access ${req.url}`);
     failure();
     return;
@@ -43,6 +56,10 @@ export const secureRoutes = (config, database) => (req, res, next) => {
 
   jwt.verify(token, secret, (err, tokenData) => {
     if (err) {
+      if (failureOverride(token, err)) {
+        return;
+      }
+
       logWarning(`Token data invalid to access ${req.url}`);
       failure();
       return;

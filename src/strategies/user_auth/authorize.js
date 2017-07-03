@@ -15,7 +15,7 @@ const findUserFromConfig = (database, req, config) =>
     }
     query[key] = username.trim();
 
-    if(active) {
+    if (active) {
       query[active] = true;
     }
 
@@ -90,8 +90,8 @@ export const authorize = (config, database) => (req, res) => {
       returnData,
     });
   })
-  .catch(err => {
-    logError(err);
-    res.status(403).json({success: false});
-  });
+    .catch(err => {
+      logError(err);
+      res.status(403).json({success: false});
+    });
 };
