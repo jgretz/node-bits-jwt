@@ -92,6 +92,6 @@ export const authorize = (config, database) => (req, res) => {
   })
     .catch(err => {
       logError(err);
-      res.status(403).json({success: false});
+      res.status(403).json({success: false, error: err});
     });
 };
