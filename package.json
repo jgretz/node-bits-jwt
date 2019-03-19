@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon src/index.js --exec babel-node",
     "compile": "node tools/build.js",
-    "prepublish": "npm run compile"
+    "prepublishOnly": "npm run compile"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,6 @@
     "eslint": "^5.15.3",
     "eslint-plugin-import": "^2.16.0",
     "nodemon": "^1.18.10",
-    "shelljs": "^0.7.8"
+    "shelljs": "^0.8.3"
   }
 }
